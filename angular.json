@@ -7,7 +7,10 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "displayBlock": true,
+          "inlineTemplate": true,
+          "skipTests": true
         }
       },
       "root": "",
@@ -32,7 +35,10 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": ["./src/assets/scss"]
+            }
           },
           "configurations": {
             "production": {
