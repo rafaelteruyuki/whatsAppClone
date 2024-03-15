@@ -3,8 +3,8 @@ import { Component, OnDestroy, inject } from '@angular/core';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-
 import { Subscription, take } from 'rxjs';
+
 import { UserService } from '../../services/user.service';
 
 @Component({
