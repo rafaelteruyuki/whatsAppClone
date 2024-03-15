@@ -31,6 +31,10 @@
       background-color: $background;
       margin-bottom: 1rem;
       padding: 1rem;
+
+      &:hover {
+        background-color: $background-3;
+      }
       
       &:last-child {
         margin-bottom: 0;
