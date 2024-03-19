@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { Subscription, take } from 'rxjs';
 
+import { User } from '../../interfaces/user.interface';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -14,15 +14,19 @@ import { UserService } from '../../services/user.service';
     <div class="container">
       <h2>Escolha um usuário:</h2>
 
-      <input #inputFile type="file">
+      <input #inputFile type="file" (change)="onLoadImage($event)">
       
       <ul class="user-list">
-        @for (user of users$ | async; track user.id) {
+        @for (userData of users$ | async; track userData.user.id) {
           <li class="user">
-            <img class="user-image" src="" alt="Foto">
-            <h3 class="user-name">{{user.name}}</h3>
-            <button (click)="inputFile.click()" class="img-upload">
-              <fa-icon [icon]="faCamera" size="2x"/>
+            @if(userData.image) {
+              <img class="user-image" [src]="userData.image" alt="Foto {{userData.user.name}}">
+            } @else {
+              <span class="user-initials">{{userData.user.initials}}</span>
+            }
+            <h3 class="user-name">{{userData.user.name}}</h3>
+            <button (click)="onImageUploadBtnClicked(userData.user, inputFile)" class="img-upload">
+              <fa-icon class="icon-camera" [icon]="faCamera" size="2x"/>
             </button>
           </li>
         }
@@ -31,32 +35,37 @@ import { UserService } from '../../services/user.service';
   `,
   styleUrl: './login-page.component.scss'
 })
-export class LoginPageComponent implements OnDestroy {
+export class LoginPageComponent {
   private userService = inject(UserService);
+  private lastUserClicked: User | undefined;
 
   protected faCamera = faCamera;
   protected users$ = this.userService.getUsers();
 
-  private subscription = new Subscription();
-
-  constructor() {
-    this.users$
-      .pipe(take(1)) //mata o subscribe após a quantidade de emissões passadas no take()
-      .subscribe(
-        users => {
-          console.log('Users do subscribe com o take(1)', users)
-        }
-      );
-    
-    //Outra forma de matar o subscribe
-    const subscription = this.users$.subscribe(users => {
-      console.log('Users do subscribe com a subscription capturada', users)
-    });
-
-    this.subscription.add(subscription);
+  private refreshUsers() {
+    this.users$ = this.userService.getUsers();
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  protected onLoadImage(event: Event) {
+    const inputFile = event.target as HTMLInputElement;
+    const files = inputFile.files;
+  
+    if(!files || files.length === 0) { return; }
+    
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(files[0]);
+    reader.onloadend = () => {
+      const image = reader.result as ArrayBuffer;
+      if(this.lastUserClicked) {
+        this.userService.addUpdateUserImage(this.lastUserClicked.id, image).subscribe(
+          () => this.refreshUsers()
+        );
+      }
+    }
+  }
+
+  protected onImageUploadBtnClicked(user: User, inputFile: HTMLInputElement) {
+    this.lastUserClicked = user;
+    inputFile.click();
   }
 }

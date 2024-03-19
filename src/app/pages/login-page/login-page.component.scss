@@ -40,9 +40,26 @@
         margin-bottom: 0;
       }
 
-      .user-image {
-        width: 4rem;
+      .user-image,
+      .user-initials {
+        width: 5rem;
         height: 5rem;
+        border-radius: 50rem;
+      }
+
+      .user-image {
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .user-initials {
+        background-color: $highlight;
+        color: $background;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.3em;
+        font-weight: 700;
       }
 
       .user-name {
@@ -58,6 +75,16 @@
         background: none;
         padding: 0;
         cursor: pointer;
+
+        &:hover {
+          fa-icon::ng-deep svg path {
+            color: $fonte;
+          }
+        }
+
+        fa-icon::ng-deep svg path {
+          color: $font-2;
+        }
       }
     }
   }
