@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
-import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { LocalDB } from '../common/db/local-db';
 import { User } from '../interfaces/user.interface';
 
 @Injectable({
@@ -21,6 +22,14 @@ export class UserService {
             map(image => ({ user, image}))
         ));
         return forkJoin(userImageRequests);
+      }),
+      tap(users => {
+        new LocalDB().addUsers(users.map(user => ({
+          id: user.user.id,
+          name: user.user.name,
+          initials: user.user.initials,
+          imageBlob: user.image
+        })));
       }),
       map(users => users.map(user => ({
         user: user.user,
