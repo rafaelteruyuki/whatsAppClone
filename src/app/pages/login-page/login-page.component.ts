@@ -10,29 +10,7 @@ import { UserService } from '../../services/user.service';
 @Component({
   standalone: true,
   imports: [FontAwesomeModule, AsyncPipe],
-  template: `
-    <div class="container">
-      <h2>Escolha um usuário:</h2>
-
-      <input #inputFile type="file" (change)="onLoadImage($event)">
-      
-      <ul class="user-list">
-        @for (userData of users$ | async; track userData.user.id) {
-          <li class="user">
-            @if(userData.image) {
-              <img class="user-image" [src]="userData.image" alt="Foto {{userData.user.name}}">
-            } @else {
-              <span class="user-initials">{{userData.user.initials}}</span>
-            }
-            <h3 class="user-name">{{userData.user.name}}</h3>
-            <button (click)="onImageUploadBtnClicked(userData.user, inputFile)" class="img-upload">
-              <fa-icon class="icon-camera" [icon]="faCamera" size="2x"/>
-            </button>
-          </li>
-        }
-      </ul>
-    </div>
-  `,
+  templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })
 export class LoginPageComponent {
@@ -57,9 +35,8 @@ export class LoginPageComponent {
     reader.onloadend = () => {
       const image = reader.result as ArrayBuffer;
       if(this.lastUserClicked) {
-        this.userService.addUpdateUserImage(this.lastUserClicked.id, image).subscribe(
-          () => this.refreshUsers()
-        );
+        this.userService.addUpdateUserImage(this.lastUserClicked.id, image)
+        .subscribe(() => this.refreshUsers());
       }
     }
   }
