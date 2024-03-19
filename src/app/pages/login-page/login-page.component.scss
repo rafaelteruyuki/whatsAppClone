@@ -54,12 +54,12 @@
 
       .user-initials {
         background-color: $highlight;
-        color: $background;
+        color: $font-2;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 1.3em;
-        font-weight: 700;
+        font-weight: 600;
       }
 
       .user-name {
